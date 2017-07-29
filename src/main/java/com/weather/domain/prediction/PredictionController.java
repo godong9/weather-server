@@ -32,8 +32,8 @@ public class PredictionController {
     }
 
     @GetMapping("/predictions/crawling")
-    public void predictionCrawling() throws URISyntaxException {
-        predictionService.predictionCrawling();
+    public String predictionCrawling() throws URISyntaxException {
+        return predictionService.predictionCrawling();
     }
 
     @GetMapping("/predictions")

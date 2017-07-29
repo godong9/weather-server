@@ -37,17 +37,17 @@ public class PredictionService {
     }
 
     @Transactional(readOnly = false)
-    public void predictionCrawling() throws URISyntaxException {
+    public String predictionCrawling() throws URISyntaxException {
         List<Integer> xList = new ArrayList<>();
         List<Integer> yList = new ArrayList<>();
 
-        int count = 0;
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             File csv = new File("/home/ubuntu/nxny.csv");
             BufferedReader br = new BufferedReader(new FileReader(csv));
             String line = "";
 
+            int count = 0;
             while ((line = br.readLine()) != null && count < 900){
                 count += 1;
                 String[] token = line.split(",", -1);
@@ -61,6 +61,7 @@ public class PredictionService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     @Transactional(readOnly = false)
