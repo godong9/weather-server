@@ -41,13 +41,15 @@ public class PredictionService {
         List<Integer> xList = new ArrayList<>();
         List<Integer> yList = new ArrayList<>();
 
+        int count = 0;
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             File csv = new File(classLoader.getResource("nxny.csv").getFile());
             BufferedReader br = new BufferedReader(new FileReader(csv));
             String line = "";
 
-            while ((line = br.readLine()) != null){
+            while ((line = br.readLine()) != null && count < 900){
+                count += 1;
                 String[] token = line.split(",", -1);
                 xList.add(Integer.parseInt(token[0]));
                 yList.add(Integer.parseInt(token[1]));
