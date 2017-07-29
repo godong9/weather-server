@@ -39,6 +39,15 @@ public class Prediction {
     @Column(name = "rain_prop")
     private String railProp;
 
+    @Column(name = "nx")
+    private Integer nx;
+
+    @Column(name = "ny")
+    private Integer ny;
+
+    @Column(name = "base_date")
+    private Date baseDate;
+
     @Column(name = "prediction_date")
     private Date predictionDate;
 
