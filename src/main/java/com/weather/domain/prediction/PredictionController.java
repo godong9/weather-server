@@ -27,7 +27,7 @@ public class PredictionController {
     }
 
     @GetMapping("/predictions/crawling")
-    public void readPredictionList() throws URISyntaxException {
+    public void predictionCrawling() throws URISyntaxException {
         // TODO: nx, ny 전부 돌면서
         // predictionService.readPrediction(predictionRequestDto);
     }
