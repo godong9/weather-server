@@ -65,7 +65,8 @@ public class PostController {
      * @apiParam {Number} nx X 좌표
      * @apiParam {Number} ny Y 좌표
      *
-     * @apiExample http://localhost:9000/posts?nx=120&ny=30
+     * @apiExample {curl} Example:
+     *      http://localhost:9000/posts?nx=120&ny=30
      *
      * @apiSuccess {Number} id 포스트 id
      * @apiSuccess {Number} prediction_id 기상청 예측 id
@@ -100,7 +101,8 @@ public class PostController {
      *
      * @apiParam {Number} user_id 유저 id
      *
-     * @apiExample http://localhost:9000/posts/1?user_id=1
+     * @apiExample {curl} Example:
+     *      http://localhost:9000/posts/1?user_id=1
      *
      * @apiSuccess {Number} id 포스트 id
      * @apiSuccess {Number} prediction_id 기상청 예측 id
