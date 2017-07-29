@@ -94,8 +94,8 @@ public class PredictionService {
             e.printStackTrace();
         }
 
-        for(int i = 0; i < xList.size(); i++) {
-            this.readPrediction(xList.get(i), yList.get(i));
+        for(int i = 0; i < xList.size(); i++){
+//           this.readPrediction(xList.get(i), yList.get(i)); // TODO: 주석 해제
         }
 
         return null;
