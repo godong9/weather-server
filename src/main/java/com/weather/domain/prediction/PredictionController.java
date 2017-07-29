@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URISyntaxException;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -34,5 +36,11 @@ public class PredictionController {
     public Prediction readPrediction(@Valid @RequestBody PredictionRequestDto predictionRequestDto) throws URISyntaxException {
         Prediction prediction = predictionService.readPrediction(predictionRequestDto);
         return prediction;
+    }
+
+    @GetMapping("/predictions/list")
+    public List<Prediction> readPredictionList() throws URISyntaxException {
+        // TODO: startNx, startNy, endNx, endNy 받아서 범위 검색
+
     }
 }
