@@ -124,6 +124,36 @@ public class PostController {
         return getPostResult(post);
     }
 
+    /**
+     * @api {post} /posts Create Post like
+     * @apiName PostLike
+     * @apiGroup Post
+     *
+     * @apiDescription 포스트 좋아요
+     *
+     * @apiParam {Number} post_id 포스트 id
+     * @apiParam {Number} user_id 유저 id
+     *
+     * @apiSuccess {Number} id 포스트 id
+     * @apiSuccess {Number} prediction_id 기상청 예측 id
+     * @apiSuccess {String} prediction_temperature 기상청 예측 기온
+     * @apiSuccess {String} prediction_humidity 기상청 예측 습도
+     * @apiSuccess {String} prediction_rain_prop 기상청 예측 강수확률
+     * @apiSuccess {Number} user_id 유저 id
+     * @apiSuccess {String} user_nicknam 유저 닉네임
+     * @apiSuccess {Number} code 날씨 코드
+     * @apiSuccess {String} text 댓글
+     * @apiSuccess {Number} nx X 좌표
+     * @apiSuccess {Number} ny Y 좌표
+     * @apiSuccess {Boolean} is_liked 좋아요 여부
+     * @apiSuccess {Date} base_date 기상청 발표 시각
+     * @apiSuccess {Date} prediction_date 기상청 예보 시각
+     * @apiSuccess {Date} created_at 생성 시각
+     */
+    @PostMapping("/posts/like")
+    public void createPostLike(@RequestBody @Valid PostLikeForm postLikeForm) {
+        postService.createPostLike(modelMapper.map(postLikeForm, PostLikeDto.class));
+    }
 
     private PostResult getPostResult(Post post) {
         PostResult postResult = modelMapper.map(post, PostResult.class);
