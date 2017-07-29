@@ -36,6 +36,7 @@ dependencies {
 
 	compile('org.projectlombok:lombok')
 	compile('com.google.guava:guava:21.0')
+	compile('org.apache.commons:commons-lang3:3.5')
 	compile('org.modelmapper.extensions:modelmapper-spring:1.1.0')
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')

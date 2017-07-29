@@ -1,6 +1,7 @@
 package com.weather.domain.prediction;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -8,6 +9,7 @@ import java.util.Date;
  * Created by godong9 on 2017. 7. 29..
  */
 @Data
+@NoArgsConstructor
 public class PredictionResponseDto {
     private WeatherCode weatherCode;
 
@@ -17,5 +19,5 @@ public class PredictionResponseDto {
 
     private String railProp;
 
-    private Date predictionDate;
+    private String predictionDate;
 }

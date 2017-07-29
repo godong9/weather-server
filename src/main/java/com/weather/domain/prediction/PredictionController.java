@@ -20,8 +20,8 @@ public class PredictionController {
     private PredictionService predictionService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public PredictionResponseDto readPrediction(@Valid @RequestBody PredictionRequestDto predictionRequestDto){
-        PredictionResponseDto predictionResponseDto = this.predictionService.readPrediction(predictionRequestDto);
+    public String readPrediction(@Valid @RequestBody PredictionRequestDto predictionRequestDto){
+        String predictionResponseDto = this.predictionService.readPrediction(predictionRequestDto);
         return predictionResponseDto;
     }
 }

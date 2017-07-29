@@ -8,8 +8,7 @@ import lombok.Data;
  */
 
 @Data
-public class PostDto {
-    private Long id;
+public class PostForm {
     private Long predictionId;
     private Long userId;
     private WeatherCode weatherCode;
