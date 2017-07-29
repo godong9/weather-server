@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by godong9 on 2017. 7. 29..
@@ -16,6 +17,9 @@ import java.util.List;
 public class PostService {
     @Autowired
     PostRepository postRepository;
+
+    @Autowired
+    PostLikeRepository postLikeRepository;
 
     @Autowired
     UserService userService;
@@ -30,6 +34,19 @@ public class PostService {
                 .nx(postDto.getNx())
                 .ny(postDto.getNy())
                 .build());
+    }
+
+    public Post findOne(Long postId, Long userId) {
+        Post post = postRepository.findOne(postId);
+
+        PostLike postLike = postLikeRepository.findByPostIdAndUserId(postId, userId);
+        if (!Objects.isNull(postLike)) {
+            post.setIsLiked(true);
+        } else {
+            post.setIsLiked(false);
+        }
+
+        return post;
     }
 
     public List<Post> findByNxAndNy(Integer nx, Integer ny) {

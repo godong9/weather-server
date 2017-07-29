@@ -24,6 +24,7 @@ public class PostResult {
     private String text;
     private Integer nx;
     private Integer ny;
+    private Boolean isLiked;
 
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Date baseDate;

@@ -1,6 +1,5 @@
 package com.weather.domain.post;
 
-import com.weather.domain.prediction.Prediction;
 import com.weather.domain.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -67,6 +65,8 @@ public class PostController {
      * @apiParam {Number} nx X 좌표
      * @apiParam {Number} ny Y 좌표
      *
+     * @apiExample http://localhost:9000/posts?nx=120&ny=30
+     *
      * @apiSuccess {Number} id 포스트 id
      * @apiSuccess {Number} prediction_id 기상청 예측 id
      * @apiSuccess {String} prediction_temperature 기상청 예측 기온
@@ -78,6 +78,7 @@ public class PostController {
      * @apiSuccess {String} text 댓글
      * @apiSuccess {Number} nx X 좌표
      * @apiSuccess {Number} ny Y 좌표
+     * @apiSuccess {Boolean} is_liked 좋아요 여부
      * @apiSuccess {Date} base_date 기상청 발표 시각
      * @apiSuccess {Date} prediction_date 기상청 예보 시각
      * @apiSuccess {Date} created_at 생성 시각
@@ -86,15 +87,54 @@ public class PostController {
     public List<PostResult> getPosts(@RequestParam("nx") Integer nx, @RequestParam("ny") Integer ny) {
         List<Post> postList = postService.findByNxAndNy(nx, ny);
         return postList.stream()
-                .map(post -> {
-                    PostResult postResult = modelMapper.map(post, PostResult.class);
+                .map(this::getPostResult)
+                .collect(Collectors.toList());
+    }
 
-                    User user = post.getUser();
-                    postResult.setUserId(user.getId());
-                    postResult.setUserNickname(user.getNickname());
-                    postResult.setCode(post.getWeatherCode().getCode());
+    /**
+     * @api {get} /posts/:id Get Post Detail
+     * @apiName PostDetail
+     * @apiGroup Post
+     *
+     * @apiDescription 포스트 상세 정보
+     *
+     * @apiParam {Number} user_id 유저 id
+     *
+     * @apiExample http://localhost:9000/posts/1?user_id=1
+     *
+     * @apiSuccess {Number} id 포스트 id
+     * @apiSuccess {Number} prediction_id 기상청 예측 id
+     * @apiSuccess {String} prediction_temperature 기상청 예측 기온
+     * @apiSuccess {String} prediction_humidity 기상청 예측 습도
+     * @apiSuccess {String} prediction_rain_prop 기상청 예측 강수확률
+     * @apiSuccess {Number} user_id 유저 id
+     * @apiSuccess {String} user_nicknam 유저 닉네임
+     * @apiSuccess {Number} code 날씨 코드
+     * @apiSuccess {String} text 댓글
+     * @apiSuccess {Number} nx X 좌표
+     * @apiSuccess {Number} ny Y 좌표
+     * @apiSuccess {Boolean} is_liked 좋아요 여부
+     * @apiSuccess {Date} base_date 기상청 발표 시각
+     * @apiSuccess {Date} prediction_date 기상청 예보 시각
+     * @apiSuccess {Date} created_at 생성 시각
+     */
+    @GetMapping("/posts/{id}")
+    public PostResult getPost(@PathVariable @Valid Long id, @RequestParam("user_id") Long userId) {
+        Post post = postService.findOne(id, userId);
+        return getPostResult(post);
+    }
 
-                    // TODO: 주석 해제
+
+    private PostResult getPostResult(Post post) {
+        PostResult postResult = modelMapper.map(post, PostResult.class);
+        postResult.setCode(post.getWeatherCode().getCode());
+        postResult.setIsLiked(post.getIsLiked());
+
+        User user = post.getUser();
+        postResult.setUserId(user.getId());
+        postResult.setUserNickname(user.getNickname());
+
+        // TODO: 주석 해제
 //                    Prediction prediction = post.getPrediction();
 //                    postResult.setPredictionId(prediction.getId());
 //                    postResult.setPredictionTemperature(prediction.getTemperature());
@@ -103,8 +143,7 @@ public class PostController {
 //                    postResult.setBaseDate(prediction.getBaseDate());
 //                    postResult.setPredictionDate(prediction.getPredictionDate());
 
-                    return postResult;
-                })
-                .collect(Collectors.toList());
+        return postResult;
     }
+
 }

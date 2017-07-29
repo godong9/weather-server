@@ -32,12 +32,9 @@ public class PostLike {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @Column(name = "is_liked")
-    private Boolean isLiked;
 
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)

@@ -7,8 +7,7 @@ import lombok.Data;
  */
 
 @Data
-public class PostLikeDto {
-    private Long id;
+public class PostLikeForm {
     private Long userId;
     private Long postId;
 }

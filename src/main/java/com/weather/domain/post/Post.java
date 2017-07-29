@@ -59,4 +59,7 @@ public class Post {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
+
+    @Transient
+    private Boolean isLiked = false;
 }
