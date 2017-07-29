@@ -44,7 +44,7 @@ public class PredictionService {
         List<Integer> yList = new ArrayList<>();
 
         try {
-            log.info("path: ", System.getProperty("user.dir"));
+            log.info("path: {}", System.getProperty("user.dir"));
 
             File csv = new File(System.getProperty("user.dir") + "/nxny.csv");
             BufferedReader br = new BufferedReader(new FileReader(csv));
@@ -64,6 +64,11 @@ public class PredictionService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        for(int i = 0; i < xList.size(); i++){
+           this.readPrediction(xList.get(i), yList.get(i));
+        }
+
         return null;
     }
 
@@ -195,7 +200,7 @@ public class PredictionService {
             prediction.setTemperature(resultMap.get("T1H").toString());
             prediction.setHumidity(resultMap.get("REH").toString());
 
-            this.predictionRepository.save(prediction);
+            predictionRepository.save(prediction);
 
         } catch (ParseException e) {
             e.printStackTrace();
