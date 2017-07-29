@@ -17,6 +17,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public User findOne(Long id) {
+        return userRepository.findOne(id);
+    }
+
     @Transactional(readOnly = false)
     public User create() {
         return userRepository.save(User.builder()

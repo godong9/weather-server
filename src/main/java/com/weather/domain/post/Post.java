@@ -22,7 +22,7 @@ import java.util.Date;
 @EqualsAndHashCode(of = "id")
 @ToString
 @Entity
-@Table(name = "users")
+@Table(name = "posts")
 @EntityListeners({AuditingEntityListener.class})
 public class Post {
     @Id
@@ -43,6 +43,12 @@ public class Post {
 
     @Column(name = "text")
     private String text;
+
+    @Column(name = "nx")
+    private Integer nx;
+
+    @Column(name = "ny")
+    private Integer ny;
 
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)
