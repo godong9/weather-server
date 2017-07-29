@@ -37,7 +37,7 @@ public class PostController {
      * @apiSuccess {Number} id 포스트 id
      */
     @PostMapping("/posts")
-    public PostResult userSignup(@RequestBody @Valid PostForm postForm) {
+    public PostResult createPost(@RequestBody @Valid PostForm postForm) {
         Post post = postService.create(modelMapper.map(postForm, PostDto.class));
         PostResult postResult = modelMapper.map(post, PostResult.class);
         postResult.setUserId(post.getUser().getId());

@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum WeatherCode {
-    SUNNY(1), CLOUD(2), CLOUDY(3), RAIN(4), SNOW(5), THUNDER(6);
+    SUNNY(0), CLOUD(1), CLOUDY(2), RAIN(3), SNOW(4), THUNDER(5);
 
     private int code;
 }
