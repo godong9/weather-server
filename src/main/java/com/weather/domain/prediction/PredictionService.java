@@ -37,8 +37,7 @@ public class PredictionService {
     }
 
     @Transactional(readOnly = false)
-    public List<Prediction> predictionCrawling() throws URISyntaxException {
-        List<Prediction> predictionList = new ArrayList<>();
+    public void predictionCrawling() throws URISyntaxException {
         List<Integer> xList = new ArrayList<>();
         List<Integer> yList = new ArrayList<>();
 
@@ -59,11 +58,6 @@ public class PredictionService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        for(int i = 0; i < xList.size(); i++){
-            predictionList.add(this.readPrediction(xList.get(i), yList.get(i)));
-        }
-        return predictionList;
     }
 
     @Transactional(readOnly = false)
