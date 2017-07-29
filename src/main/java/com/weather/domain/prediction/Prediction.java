@@ -19,7 +19,7 @@ import java.util.Date;
 @EqualsAndHashCode(of = "id")
 @ToString
 @Entity
-@Table(name = "users")
+@Table(name = "predictions")
 @EntityListeners({AuditingEntityListener.class})
 public class Prediction {
     @Id
