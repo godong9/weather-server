@@ -44,12 +44,12 @@ public class PredictionService {
         List<Integer> yList = new ArrayList<>();
 
         try {
-            File csv = new File(System.getProperty("user.dir") + "/nxny.csv");
+            File csv = new File(System.getProperty("user.dir") + "nxny.csv");
             BufferedReader br = new BufferedReader(new FileReader(csv));
             String line = "";
 
             int count = 0;
-            log.info("csv: ", csv);
+            log.info("path: ", System.getProperty("user.dir"));
             while ((line = br.readLine()) != null && count < 900){
                 count += 1;
                 String[] token = line.split(",", -1);
