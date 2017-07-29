@@ -1,5 +1,6 @@
 package com.weather.domain.prediction;
 
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Created by godong9 on 2017. 7. 29..
  */
 
+@Slf4j
 @Transactional(readOnly = true)
 @Service
 public class PredictionService {
@@ -42,12 +44,12 @@ public class PredictionService {
         List<Integer> yList = new ArrayList<>();
 
         try {
-            ClassLoader classLoader = getClass().getClassLoader();
             File csv = new File("/home/ubuntu/nxny.csv");
             BufferedReader br = new BufferedReader(new FileReader(csv));
             String line = "";
 
             int count = 0;
+            log.info("csv: ", csv);
             while ((line = br.readLine()) != null && count < 900){
                 count += 1;
                 String[] token = line.split(",", -1);
