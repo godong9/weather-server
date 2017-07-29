@@ -20,7 +20,7 @@ public class UserController {
     private UserService userService;
 
     /**
-     * @api {post} /users/signup Request User signup
+     * @api {post} /users/signup Signup User
      * @apiName UserSignup
      * @apiGroup User
      *

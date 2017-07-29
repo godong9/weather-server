@@ -26,7 +26,7 @@ public class PostController {
     private PostService postService;
 
     /**
-     * @api {post} /posts Request Post create
+     * @api {post} /posts Create Post
      * @apiName PostCreate
      * @apiGroup Post
      *
@@ -58,7 +58,7 @@ public class PostController {
     }
 
     /**
-     * @api {get} /posts Request Post list
+     * @api {get} /posts Get Post list
      * @apiName PostList
      * @apiGroup Post
      *
