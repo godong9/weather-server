@@ -30,15 +30,14 @@ public class PredictionController {
     }
 
     @GetMapping("/predictions/crawling")
-    public List<PredictionResult> predictionCrawling() throws URISyntaxException {
-        List<PredictionResult> predictionList = predictionService.predictionCrawling();
-        return predictionList;
+    public String predictionCrawling() throws URISyntaxException {
+        return predictionService.predictionCrawling();
     }
 
     @GetMapping("/predictions")
     public PredictionResult readPrediction(@RequestParam(name = "nx") int nx, @RequestParam(name = "ny") int ny) throws URISyntaxException {
-        PredictionResult predictionResult = predictionService.readPrediction(nx, ny);
-        return predictionResult;
+        Prediction prediction = predictionService.readPrediction(nx, ny);
+        return getPredictionResult(prediction);
     }
 
     /**

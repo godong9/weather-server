@@ -1,5 +1,6 @@
 package com.weather.domain.prediction;
 
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Created by godong9 on 2017. 7. 29..
  */
 
+@Slf4j
 @Transactional(readOnly = true)
 @Service
 public class PredictionService {
@@ -30,7 +32,7 @@ public class PredictionService {
 
     private String baseUrl = "http://newsky2.kma.go.kr/service/SecndSrtpdFrcstInfoService2";
 
-    private String ServiceKey = "%2BaK44ICKBp5y4KlIjv3tYRMb2QyCAtghncqxCvC4Q2kHIjJJ86oXXHijjCFJeAOUmwbe9cs1r1rQWyu5EZS6bQ%3D%3D";
+    private String ServiceKey = "cXqTRI3qOGp4XFS9evMZ5MI%2BA0UE0b3%2FnKPpFZ2SsrzGnB5jaFVuxCfQZ97%2F6xiR%2Boat8hyjcdHzdNUDKZC8xw%3D%3D";
 
     public Prediction findOne(Long id) {
         return predictionRepository.findOne(id);
@@ -62,17 +64,20 @@ public class PredictionService {
     }
 
     @Transactional(readOnly = false)
-    public List<PredictionResult> predictionCrawling() throws URISyntaxException {
-        List<PredictionResult> predictionResultList = new ArrayList<>();
+    public String predictionCrawling() throws URISyntaxException {
         List<Integer> xList = new ArrayList<>();
         List<Integer> yList = new ArrayList<>();
 
         try {
-            File csv = new File("/Users/gain/weather-server/src/main/resources/nxny.csv");
+            log.info("path: {}", System.getProperty("user.dir"));
+
+            File csv = new File(System.getProperty("user.dir") + "/nxny.csv");
             BufferedReader br = new BufferedReader(new FileReader(csv));
             String line = "";
 
-            while ((line = br.readLine()) != null){
+            int count = 0;
+            while ((line = br.readLine()) != null && count < 900){
+                count += 1;
                 String[] token = line.split(",", -1);
                 xList.add(Integer.parseInt(token[0]));
                 yList.add(Integer.parseInt(token[1]));
@@ -85,14 +90,15 @@ public class PredictionService {
             e.printStackTrace();
         }
 
-        for(int i = 0; i < xList.size(); i++){
-            predictionResultList.add(this.readPrediction(xList.get(i), yList.get(i)));
+        for(int i = 0; i < xList.size(); i++) {
+            this.readPrediction(xList.get(i), yList.get(i));
         }
-        return predictionResultList;
+
+        return null;
     }
 
     @Transactional(readOnly = false)
-    public PredictionResult readPrediction(int nx,  int ny) throws URISyntaxException {
+    public Prediction readPrediction(int nx,  int ny) throws URISyntaxException {
         Prediction prediction = new Prediction();
         Map<String, Integer> map = new HashMap<>();
         Map<String, Float> resultMap = new HashMap<>();
@@ -219,7 +225,7 @@ public class PredictionService {
             prediction.setTemperature(resultMap.get("T1H").toString());
             prediction.setHumidity(resultMap.get("REH").toString());
 
-            this.predictionRepository.save(prediction);
+            predictionRepository.save(prediction);
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -227,21 +233,7 @@ public class PredictionService {
             e.printStackTrace();
         }
 
-        Prediction tmpPrediction = this.predictionRepository.findByNxAndNy(prediction.getNx(), prediction.getNy());
-
-        PredictionResult predictionResult = new PredictionResult();
-
-        predictionResult.setId(tmpPrediction.getId());
-        predictionResult.setWeatherCode(tmpPrediction.getWeatherCode());
-        predictionResult.setHumidity(tmpPrediction.getHumidity());
-        predictionResult.setRainProp(tmpPrediction.getRainProp());
-        predictionResult.setNx(tmpPrediction.getNx());
-        predictionResult.setNy(tmpPrediction.getNy());
-        predictionResult.setBaseDate(tmpPrediction.getBaseDate());
-        predictionResult.setPredictionDate(tmpPrediction.getPredictionDate());
-        predictionResult.setCreatedAt(tmpPrediction.getCreatedAt());
-
-        return predictionResult;
+        return prediction;
     }
 
     public List<Prediction> findByNxGreaterThanAndNyGreaterThanAndNxLessThanAndNyLessThan(int startNx, int startNy, int endNx, int endNy) {
