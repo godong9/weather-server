@@ -42,7 +42,8 @@ public class PredictionService {
         List<Integer> yList = new ArrayList<>();
 
         try {
-            File csv = new File("/Users/gain/weather-server/src/main/resources/nxny.csv");
+            ClassLoader classLoader = getClass().getClassLoader();
+            File csv = new File(classLoader.getResource("nxny.csv").getFile());
             BufferedReader br = new BufferedReader(new FileReader(csv));
             String line = "";
 
