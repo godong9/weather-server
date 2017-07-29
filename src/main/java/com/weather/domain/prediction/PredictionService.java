@@ -44,7 +44,7 @@ public class PredictionService {
         List<Integer> yList = new ArrayList<>();
 
         try {
-            File csv = new File("/home/ubuntu/nxny.csv");
+            File csv = new File("nxny.csv");
             BufferedReader br = new BufferedReader(new FileReader(csv));
             String line = "";
 
