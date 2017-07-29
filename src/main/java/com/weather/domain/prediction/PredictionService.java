@@ -36,9 +36,34 @@ public class PredictionService {
         return predictionRepository.findOne(id);
     }
 
+    public List<PredictionResult> readPredictionInit(){
+        List<PredictionResult> predictionResultList = new ArrayList<>();
+        int[] xList = {60, 98, 89, 55, 58, 67, 102, 73, 52, 61, 62};
+        int[] yList = {127, 76, 90, 124, 74, 100, 84, 134, 38, 121, 123};
+
+        for(int i = 0; i < xList.length; i++){
+            Prediction prediction = this.predictionRepository.findByNxAndNy(xList[i], yList[i]);
+            PredictionResult predictionResult = new PredictionResult();
+
+            predictionResult.setId(prediction.getId());
+            predictionResult.setWeatherCode(prediction.getWeatherCode());
+            predictionResult.setHumidity(prediction.getHumidity());
+            predictionResult.setRainProp(prediction.getRainProp());
+            predictionResult.setNx(prediction.getNx());
+            predictionResult.setNy(prediction.getNy());
+            predictionResult.setBaseDate(prediction.getBaseDate());
+            predictionResult.setPredictionDate(prediction.getPredictionDate());
+            predictionResult.setCreatedAt(prediction.getCreatedAt());
+
+            predictionResultList.add(predictionResult);
+        }
+
+        return predictionResultList;
+    }
+
     @Transactional(readOnly = false)
-    public List<Prediction> predictionCrawling() throws URISyntaxException {
-        List<Prediction> predictionList = new ArrayList<>();
+    public List<PredictionResult> predictionCrawling() throws URISyntaxException {
+        List<PredictionResult> predictionResultList = new ArrayList<>();
         List<Integer> xList = new ArrayList<>();
         List<Integer> yList = new ArrayList<>();
 
@@ -61,13 +86,13 @@ public class PredictionService {
         }
 
         for(int i = 0; i < xList.size(); i++){
-            predictionList.add(this.readPrediction(xList.get(i), yList.get(i)));
+            predictionResultList.add(this.readPrediction(xList.get(i), yList.get(i)));
         }
-        return predictionList;
+        return predictionResultList;
     }
 
     @Transactional(readOnly = false)
-    public Prediction readPrediction(int nx,  int ny) throws URISyntaxException {
+    public PredictionResult readPrediction(int nx,  int ny) throws URISyntaxException {
         Prediction prediction = new Prediction();
         Map<String, Integer> map = new HashMap<>();
         Map<String, Float> resultMap = new HashMap<>();
@@ -202,8 +227,21 @@ public class PredictionService {
             e.printStackTrace();
         }
 
+        Prediction tmpPrediction = this.predictionRepository.findByNxAndNy(prediction.getNx(), prediction.getNy());
 
-        return prediction;
+        PredictionResult predictionResult = new PredictionResult();
+
+        predictionResult.setId(tmpPrediction.getId());
+        predictionResult.setWeatherCode(tmpPrediction.getWeatherCode());
+        predictionResult.setHumidity(tmpPrediction.getHumidity());
+        predictionResult.setRainProp(tmpPrediction.getRainProp());
+        predictionResult.setNx(tmpPrediction.getNx());
+        predictionResult.setNy(tmpPrediction.getNy());
+        predictionResult.setBaseDate(tmpPrediction.getBaseDate());
+        predictionResult.setPredictionDate(tmpPrediction.getPredictionDate());
+        predictionResult.setCreatedAt(tmpPrediction.getCreatedAt());
+
+        return predictionResult;
     }
 
     public List<Prediction> findByNxGreaterThanAndNyGreaterThanAndNxLessThanAndNyLessThan(int startNx, int startNy, int endNx, int endNy) {

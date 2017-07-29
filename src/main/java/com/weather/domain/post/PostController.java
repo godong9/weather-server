@@ -27,7 +27,7 @@ public class PostController {
     private ModelMapper modelMapper;
 
     @Autowired
-    private PostService postService;
+    private PostService    postService;
 
     /**
      * @api {post} /posts Create Post

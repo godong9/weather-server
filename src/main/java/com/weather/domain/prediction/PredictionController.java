@@ -1,11 +1,9 @@
 package com.weather.domain.prediction;
 
-import com.weather.domain.post.Post;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,21 +24,21 @@ public class PredictionController {
     private PredictionService predictionService;
 
     @GetMapping("/predictions/init")
-    public Prediction readPredictionInit() throws URISyntaxException {
-        // TODO: 초기 지도화면 정해진 좌표 10개정도 내려주기!
-        return null;
+    public List<PredictionResult> readPredictionInit() throws URISyntaxException {
+        List<PredictionResult> predictionResultList = predictionService.readPredictionInit();
+        return predictionResultList;
     }
 
     @GetMapping("/predictions/crawling")
-    public List<Prediction> predictionCrawling() throws URISyntaxException {
-        List<Prediction> predictionList = predictionService.predictionCrawling();
+    public List<PredictionResult> predictionCrawling() throws URISyntaxException {
+        List<PredictionResult> predictionList = predictionService.predictionCrawling();
         return predictionList;
     }
 
     @GetMapping("/predictions")
-    public Prediction readPrediction(@RequestParam(name = "nx") int nx, @RequestParam(name = "ny") int ny) throws URISyntaxException {
-        Prediction prediction = predictionService.readPrediction(nx, ny);
-        return prediction;
+    public PredictionResult readPrediction(@RequestParam(name = "nx") int nx, @RequestParam(name = "ny") int ny) throws URISyntaxException {
+        PredictionResult predictionResult = predictionService.readPrediction(nx, ny);
+        return predictionResult;
     }
 
     /**
