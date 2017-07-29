@@ -44,7 +44,7 @@ public class PredictionService {
         int count = 0;
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            File csv = new File(classLoader.getResource("nxny.csv").getFile());
+            File csv = new File(classLoader.getResource("file/nxny.csv").getFile());
             BufferedReader br = new BufferedReader(new FileReader(csv));
             String line = "";
 
