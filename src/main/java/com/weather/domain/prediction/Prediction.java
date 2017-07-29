@@ -45,9 +45,11 @@ public class Prediction {
     @Column(name = "ny")
     private Integer ny;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "base_date")
     private Date baseDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "prediction_date")
     private Date predictionDate;
 

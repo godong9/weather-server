@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -28,66 +31,144 @@ public class PredictionService {
     private String ServiceKey = "%2BaK44ICKBp5y4KlIjv3tYRMb2QyCAtghncqxCvC4Q2kHIjJJ86oXXHijjCFJeAOUmwbe9cs1r1rQWyu5EZS6bQ%3D%3D";
 
 
-    public String readPrediction(PredictionRequestDto predictionRequestDto){
-        //PredictionResponseDto predictionResponseDto = new PredictionResponseDto();
+    public Prediction readPrediction(PredictionRequestDto predictionRequestDto) throws URISyntaxException {
         Prediction prediction = new Prediction();
+        Map<String, Integer> map = new HashMap<>();
+        Map<String, Float> resultMap = new HashMap<>();
 
         RestTemplate restTemplate = new RestTemplate();
         DateTime dt = new DateTime();
-        String base_date = dt.toString("yyyymmdd");
+        String base_date = dt.toString("yyyyMMdd");
 
         int hour = dt.getHourOfDay();
+        int minute = dt.getMinuteOfHour();
+
+        if(minute < 30){
+            hour = hour - 1;
+            if(hour < 0){
+                int dd = Integer.parseInt(base_date.substring(6,8)) - 1;
+                base_date = base_date.substring(0,6) + dd;
+            }
+
+        }
+
         String base_time = hour + "30";
 
-        String result = restTemplate.getForObject(this.baseUrl + "/ForecastTimeDate?ServiceKey=" +  this.ServiceKey +
-                "&base_date=" + base_date + "&base_time=" + base_time + "&nx=" + predictionRequestDto.getNx() + "&ny=" +
-                predictionRequestDto.getNy() + "_type=json", String.class);
+        String timeUrl = this.baseUrl + "/ForecastTimeData?ServiceKey=" +  this.ServiceKey + "&base_date=" + base_date + "&base_time=" +
+                base_time + "&nx=" + predictionRequestDto.getNx() + "&ny=" + predictionRequestDto.getNy() +  "&numOfRows=30&_type=json";
 
-//        JSONParser parser = new JSONParser();
-//
-//        try {
-//            JSONObject jsonResult = (JSONObject) parser.parse(result);
-//            JSONArray jsonArray = (JSONArray) parser.parse(jsonResult.get("item").toString());
-//
-//            for(int i=0; i < jsonArray.size(); i++){
-//                JSONObject jsonObject = (JSONObject) parser.parse(jsonArray.get(i).toString());
-//
-//                String date = jsonObject.get("baseDate").toString());
-//                String category = jsonObject.get("category").toString();
-//                int value = Integer.parseInt(jsonObject.get("fcstValue").toString());
-//                int code = 6;
-//
-//
-//                if(category.equals("SKY")){
-//                    if(value == 1)
-//                        code = 0;
-//                    else if(value == 2 || value == 3)
-//                        code = 1;
-//                    else if(value == 4)
-//                        code = 2;
-//                }else if(category.equals("PTY")){
-//
-//                    if(value == 2 || value ==3)
-//                        code = 3;
-//                    else if(value == 1)
-//                        code = 4;
-//                }else if(category.equals("LGT")){
-//                    if(value == 2 || value == 3)
-//                        code = 5;
-//                }else if(category.equals("TIH")){
-//                    prediction.setTemperature(String.valueOf(value));
-//                }else if(category.equals("REH")){
-//                    prediction.setHumidity(String.valueOf(value));
-//                }
-//
-//                prediction.setPredictionDate();
-//
-//            }
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
+        if(hour == 2){
+            hour = 23;
+            int dd = Integer.parseInt(base_date.substring(6,8)) - 1;
+            base_date = base_date.substring(0,6) + dd;
+        } else if(hour%3 == 0)
+            hour = hour - 1;
+        else if(hour%3 == 1)
+            hour = hour - 2;
 
-        return result;
+        base_time = hour + "00";
+
+        System.out.println(base_time);
+
+
+        String spaceUrl = this.baseUrl + "/ForecastSpaceData?ServiceKey=" +  this.ServiceKey + "&base_date=" + base_date + "&base_time=" +
+                base_time + "&nx=" + predictionRequestDto.getNx() + "&ny=" + predictionRequestDto.getNy() +  "&numOfRows=30&_type=json";
+
+
+        System.out.println(timeUrl);
+
+        URI timeUri = new URI(timeUrl);
+        URI spaceUri = new URI(spaceUrl);
+
+        String timeResult = restTemplate.getForObject(timeUri, String.class);
+        String spaceResult= restTemplate.getForObject(spaceUri, String.class);
+
+        JSONParser parser = new JSONParser();
+
+        try {
+            JSONObject timeObject = (JSONObject) parser.parse(timeResult);
+            JSONObject timeResponse = (JSONObject) timeObject.get("response");
+            JSONObject body = (JSONObject) timeResponse.get("body");
+            JSONObject timeItems = (JSONObject) body.get("items");
+            JSONArray timeJsonArray = (JSONArray) timeItems.get("item");
+
+            JSONObject spaceObject = (JSONObject) parser.parse(spaceResult);
+            JSONObject spaceRsponse = (JSONObject) spaceObject.get("response");
+            JSONObject spaceBody = (JSONObject) spaceRsponse.get("body");
+            JSONObject spaceItems = (JSONObject) spaceBody.get("items");
+            JSONArray spaceJsonArray = (JSONArray) spaceItems.get("item");
+
+            JSONObject rainProp = (JSONObject) spaceJsonArray.get(0);
+            prediction.setRainProp(rainProp.get("fcstValue").toString());
+            System.out.println(rainProp.get("fcstValue").toString());
+
+
+            JSONObject object = (JSONObject) parser.parse(timeJsonArray.get(0).toString());
+            map.put(object.get("category").toString(), 1);
+
+            String bsDate = object.get("baseDate").toString();
+            String pdDate = object.get("fcstDate").toString();
+
+            //파싱 왜 안되냐구...
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+            Date baseDate = format.parse(bsDate);
+            Date predictionDate = format.parse(pdDate);
+
+            prediction.setBaseDate(new Timestamp(baseDate.getTime()));
+            prediction.setPredictionDate(new Timestamp(predictionDate.getTime()));
+            prediction.setNx(Integer.parseInt(object.get("nx").toString()));
+            prediction.setNy(Integer.parseInt(object.get("ny").toString()));
+
+
+
+            for(int i = 1; i < timeJsonArray.size();i++){
+                JSONObject jsonObject = (JSONObject) parser.parse(timeJsonArray.get(i).toString());
+                String category = jsonObject.get("category").toString();
+                float value = Float.valueOf(jsonObject.get("fcstValue").toString());
+
+                if(map.containsKey(category)){
+                    if(map.get(category) < 2)
+                        resultMap.put(category, value);
+                    map.put(category, map.get(category) + 1);
+                }else{
+                    map.put(category, 1);
+                }
+            }
+
+            float skyValue = resultMap.get("SKY");
+
+            if(skyValue == 1)
+                prediction.setWeatherCode(WeatherCode.SUNNY);
+            else if(skyValue == 2 || skyValue == 3)
+                prediction.setWeatherCode(WeatherCode.CLOUD);
+            else if(skyValue == 4)
+                prediction.setWeatherCode(WeatherCode.CLOUDY);
+
+            float rainSnowValue = resultMap.get("PTY");
+
+            if(rainSnowValue == 1)
+                prediction.setWeatherCode(WeatherCode.RAIN);
+            else if(rainSnowValue == 2 || rainSnowValue == 3)
+                prediction.setWeatherCode(WeatherCode.SNOW);
+
+            float thunderValue = resultMap.get("LGT");
+
+            if(thunderValue == 2 || thunderValue == 3)
+                prediction.setWeatherCode(WeatherCode.THUNDER);
+
+            prediction.setTemperature(resultMap.get("T1H").toString());
+            prediction.setHumidity(resultMap.get("REH").toString());
+
+            this.predictionRepository.save(prediction);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        return prediction;
     }
 
 

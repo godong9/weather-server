@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.net.URISyntaxException;
 
 /**
  * Created by godong9 on 2017. 7. 29..
@@ -19,9 +20,9 @@ public class PredictionController {
     @Autowired
     private PredictionService predictionService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String readPrediction(@Valid @RequestBody PredictionRequestDto predictionRequestDto){
-        String predictionResponseDto = this.predictionService.readPrediction(predictionRequestDto);
+    @RequestMapping(method = RequestMethod.POST)
+    public Prediction  readPrediction(@Valid @RequestBody PredictionRequestDto predictionRequestDto) throws URISyntaxException {
+        Prediction predictionResponseDto = this.predictionService.readPrediction(predictionRequestDto);
         return predictionResponseDto;
     }
 }
