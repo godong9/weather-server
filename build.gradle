@@ -28,13 +28,13 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-devtools')
+
 	compile('mysql:mysql-connector-java')
 	compile('org.springframework:spring-context-support')
 
 	compile('org.projectlombok:lombok')
 	compile('com.google.guava:guava:21.0')
-	compile('org.apache.commons:commons-lang3:3.5')
-	compile('org.modelmapper.extensions:modelmapper-spring')
+	compile('org.modelmapper.extensions:modelmapper-spring:1.1.0')
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
