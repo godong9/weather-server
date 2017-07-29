@@ -32,7 +32,7 @@ public class PostController {
      *
      * @apiParam {Number} prediction_id 기상청 예측 id
      * @apiParam {Number} user_id 유저 id
-     * @apiParam {Number} weather_code 날씨 코드
+     * @apiParam {String} [image_url] 이미지 URL (없으면 제외) ex) "/images/1501336022273_aa.jpg"
      * @apiParam {String} text 댓글
      * @apiParam {Number} nx X 좌표
      * @apiParam {Number} ny Y 좌표
@@ -48,7 +48,10 @@ public class PostController {
      */
     @PostMapping("/posts")
     public PostResult createPost(@RequestBody @Valid PostForm postForm) {
-        Post post = postService.create(modelMapper.map(postForm, PostDto.class));
+        PostDto postDto = modelMapper.map(postForm, PostDto.class);
+        postDto.setImageUrl("http://www.muggle.news" + postDto.getImageUrl()); // 이미지 프리픽스 추가
+
+        Post post = postService.create(postDto);
         PostResult postResult = modelMapper.map(post, PostResult.class);
         postResult.setUserId(post.getUser().getId());
         postResult.setCode(post.getWeatherCode().getCode());

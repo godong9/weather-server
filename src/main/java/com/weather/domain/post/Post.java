@@ -53,6 +53,9 @@ public class Post {
     @Column(name = "like_count")
     private Long likeCount;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")

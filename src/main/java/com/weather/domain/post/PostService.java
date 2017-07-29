@@ -1,5 +1,6 @@
 package com.weather.domain.post;
 
+import com.weather.domain.prediction.WeatherCode;
 import com.weather.domain.user.UserService;
 import com.weather.exception.PostException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * Created by godong9 on 2017. 7. 29..
@@ -27,10 +29,37 @@ public class PostService {
 
     @Transactional(readOnly = false)
     public Post create(PostDto postDto) {
+        WeatherCode code = null;
+
+        Random randomGenerator = new Random();
+        int codeIdx = randomGenerator.nextInt(5);
+        switch (codeIdx) {
+            case 0:
+                code = WeatherCode.SUNNY;
+                break;
+            case 1:
+                code = WeatherCode.CLOUD;
+                break;
+            case 2:
+                code = WeatherCode.CLOUDY;
+                break;
+            case 3:
+                code = WeatherCode.RAIN;
+                break;
+            case 4:
+                code = WeatherCode.SNOW;
+                break;
+            case 5:
+                code = WeatherCode.THUNDER;
+                break;
+        }
+        postDto.setWeatherCode(code);
+
         return postRepository.save(Post.builder()
 //                .prediction(predictionService.findOne(postDto.getUserId())) // TODO: 수정 필요
                 .user(userService.findOne(postDto.getUserId()))
                 .weatherCode(postDto.getWeatherCode())
+                .imageUrl(postDto.getImageUrl())
                 .text(postDto.getText())
                 .nx(postDto.getNx())
                 .ny(postDto.getNy())

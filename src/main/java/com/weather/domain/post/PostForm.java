@@ -11,7 +11,7 @@ import lombok.Data;
 public class PostForm {
     private Long predictionId;
     private Long userId;
-    private WeatherCode weatherCode;
+    private String imageUrl;
     private String text;
     private Integer nx;
     private Integer ny;
