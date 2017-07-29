@@ -45,6 +45,10 @@ public class PredictionService {
 
         for(int i = 0; i < xList.length; i++){
             Prediction prediction = this.predictionRepository.findByNxAndNy(xList[i], yList[i]);
+
+            if(prediction == null)
+                continue;
+
             PredictionResult predictionResult = new PredictionResult();
 
             predictionResult.setId(prediction.getId());
