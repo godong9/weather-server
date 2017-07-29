@@ -11,8 +11,9 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class PredictionResult {
-    private Long Id;
+    private Long id;
     private WeatherCode weatherCode;
+    private Integer code;
     private String temperature;
     private String humidity;
     private String rainProp;

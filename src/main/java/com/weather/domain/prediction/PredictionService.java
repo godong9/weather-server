@@ -32,11 +32,15 @@ public class PredictionService {
 
     private String ServiceKey = "%2BaK44ICKBp5y4KlIjv3tYRMb2QyCAtghncqxCvC4Q2kHIjJJ86oXXHijjCFJeAOUmwbe9cs1r1rQWyu5EZS6bQ%3D%3D";
 
+    public Prediction findOne(Long id) {
+        return predictionRepository.findOne(id);
+    }
+
     @Transactional(readOnly = false)
     public List<Prediction> predictionCrawling() throws URISyntaxException {
+        List<Prediction> predictionList = new ArrayList<>();
         List<Integer> xList = new ArrayList<>();
         List<Integer> yList = new ArrayList<>();
-        List<Prediction> predictionList = new ArrayList<>();
 
         try {
             File csv = new File("/Users/gain/weather-server/src/main/resources/nxny.csv");
@@ -202,4 +206,9 @@ public class PredictionService {
         return prediction;
     }
 
+    public List<Prediction> findByNxGreaterThanAndNyGreaterThanAndNxLessThanAndNyLessThan(int startNx, int startNy, int endNx, int endNy) {
+        return predictionRepository.findByNxGreaterThanAndNyGreaterThanAndNxLessThanAndNyLessThan(
+                startNx, startNy, endNx, endNy
+        );
+    }
 }
