@@ -157,9 +157,6 @@ public class PostController {
         return getPostResult(post);
     }
 
-
-
-
     /**
      * @api {post} /posts Create Post like
      * @apiName PostLike

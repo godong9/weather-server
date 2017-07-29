@@ -173,4 +173,9 @@ public class PredictionService {
         return prediction;
     }
 
+    public List<Prediction> findByNxGreaterThanAndNyGreaterThanAndNxLessThanAndNyLessThan(int startNx, int startNy, int endNx, int endNy) {
+        return predictionRepository.findByNxGreaterThanAndNyGreaterThanAndNxLessThanAndNyLessThan(
+                startNx, startNy, endNx, endNy
+        );
+    }
 }
