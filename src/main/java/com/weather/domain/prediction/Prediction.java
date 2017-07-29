@@ -37,7 +37,7 @@ public class Prediction {
     private String humidity;
 
     @Column(name = "rain_prop")
-    private String railProp;
+    private String rainProp;
 
     @Column(name = "nx")
     private Integer nx;
