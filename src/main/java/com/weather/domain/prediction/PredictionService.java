@@ -31,6 +31,9 @@ public class PredictionService {
 
     private String ServiceKey = "%2BaK44ICKBp5y4KlIjv3tYRMb2QyCAtghncqxCvC4Q2kHIjJJ86oXXHijjCFJeAOUmwbe9cs1r1rQWyu5EZS6bQ%3D%3D";
 
+    public Prediction findOne(Long id) {
+        return predictionRepository.findOne(id);
+    }
 
     public Prediction readPrediction(PredictionRequestDto predictionRequestDto) throws URISyntaxException {
         Prediction prediction = new Prediction();

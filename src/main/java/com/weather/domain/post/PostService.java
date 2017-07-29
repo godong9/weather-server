@@ -1,5 +1,6 @@
 package com.weather.domain.post;
 
+import com.weather.domain.prediction.PredictionService;
 import com.weather.domain.prediction.WeatherCode;
 import com.weather.domain.user.UserService;
 import com.weather.exception.PostException;
@@ -25,7 +26,13 @@ public class PostService {
     PostLikeRepository postLikeRepository;
 
     @Autowired
+    PostStatRepository postStatRepository;
+
+    @Autowired
     UserService userService;
+
+    @Autowired
+    PredictionService predictionService;
 
     @Transactional(readOnly = false)
     public Post create(PostDto postDto) {
@@ -56,7 +63,7 @@ public class PostService {
         postDto.setWeatherCode(code);
 
         return postRepository.save(Post.builder()
-//                .prediction(predictionService.findOne(postDto.getUserId())) // TODO: 수정 필요
+                .prediction(predictionService.findOne(postDto.getPredictionId()))
                 .user(userService.findOne(postDto.getUserId()))
                 .weatherCode(postDto.getWeatherCode())
                 .imageUrl(postDto.getImageUrl())
@@ -75,6 +82,7 @@ public class PostService {
         }
 
         increasePostLikeCount(post);
+        increasePostStatCount(post);
 
         return postLikeRepository.save(PostLike.builder()
                 .post(post)
@@ -86,6 +94,23 @@ public class PostService {
     public void increasePostLikeCount(Post post) {
         post.setLikeCount(post.getLikeCount() + 1);
         postRepository.save(post);
+    }
+
+    @Transactional(readOnly = false)
+    public void increasePostStatCount(Post post) {
+        PostStat postStat = postStatRepository.findByPredictionIdAndWeatherCode(post.getPrediction().getId(), post.getWeatherCode());
+        if (Objects.isNull(postStat)) {
+            postStat = PostStat.builder()
+                    .prediction(post.getPrediction())
+                    .weatherCode(post.getWeatherCode())
+                    .nx(post.getNx())
+                    .ny(post.getNy())
+                    .count(0)
+                    .build();
+        } else {
+            postStat.setCount(postStat.getCount() + 1);
+        }
+        postStatRepository.save(postStat);
     }
 
     public Post findOne(Long id) {
@@ -107,5 +132,9 @@ public class PostService {
 
     public List<Post> findByNxAndNy(Integer nx, Integer ny) {
         return postRepository.findByNxAndNy(nx, ny);
+    }
+
+    public List<PostStat> findByPredictionId(Long predictionId) {
+        return postStatRepository.findByPredictionId(predictionId);
     }
 }

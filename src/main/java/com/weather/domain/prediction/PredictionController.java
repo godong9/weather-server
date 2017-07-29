@@ -39,7 +39,8 @@ public class PredictionController {
     }
 
     @GetMapping("/predictions/list")
-    public List<Prediction> readPredictionList() throws URISyntaxException {
+    public void readPredictionList() throws URISyntaxException {
+//    public List<Prediction> readPredictionList() throws URISyntaxException {
         // TODO: startNx, startNy, endNx, endNy 받아서 범위 검색
 
     }
