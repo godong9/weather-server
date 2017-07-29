@@ -3,12 +3,6 @@ package com.weather.domain.prediction;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.util.Date;
 
 /**
@@ -25,12 +19,12 @@ public class PredictionResult {
     private Integer nx;
     private Integer ny;
 
-    @JsonFormat()
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Date baseDate;
 
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Date predictionDate;
 
-    private Date updatedAt;
-
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Date createdAt;
 }

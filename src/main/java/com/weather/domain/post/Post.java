@@ -50,6 +50,9 @@ public class Post {
     @Column(name = "ny")
     private Integer ny;
 
+    @Column(name = "like_count")
+    private Long likeCount;
+
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
@@ -59,4 +62,7 @@ public class Post {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
+
+    @Transient
+    private Boolean isLiked = false;
 }

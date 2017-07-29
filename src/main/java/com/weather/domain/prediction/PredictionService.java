@@ -15,11 +15,12 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-
+import org.springframework.transaction.annotation.Transactional;
 /**
  * Created by godong9 on 2017. 7. 29..
  */
 
+@Transactional(readOnly = true)
 @Service
 public class PredictionService {
 
@@ -43,27 +44,27 @@ public class PredictionService {
         int hour = dt.getHourOfDay();
         int minute = dt.getMinuteOfHour();
 
-        if(minute < 30){
+        if (minute < 30) {
             hour = hour - 1;
-            if(hour < 0){
-                int dd = Integer.parseInt(base_date.substring(6,8)) - 1;
-                base_date = base_date.substring(0,6) + dd;
+            if (hour < 0) {
+                int dd = Integer.parseInt(base_date.substring(6, 8)) - 1;
+                base_date = base_date.substring(0, 6) + dd;
             }
 
         }
 
         String base_time = hour + "30";
 
-        String timeUrl = this.baseUrl + "/ForecastTimeData?ServiceKey=" +  this.ServiceKey + "&base_date=" + base_date + "&base_time=" +
-                base_time + "&nx=" + predictionRequestDto.getNx() + "&ny=" + predictionRequestDto.getNy() +  "&numOfRows=30&_type=json";
+        String timeUrl = this.baseUrl + "/ForecastTimeData?ServiceKey=" + this.ServiceKey + "&base_date=" + base_date + "&base_time=" +
+                base_time + "&nx=" + predictionRequestDto.getNx() + "&ny=" + predictionRequestDto.getNy() + "&numOfRows=30&_type=json";
 
-        if(hour == 2){
+        if (hour == 2) {
             hour = 23;
-            int dd = Integer.parseInt(base_date.substring(6,8)) - 1;
-            base_date = base_date.substring(0,6) + dd;
-        } else if(hour%3 == 0)
+            int dd = Integer.parseInt(base_date.substring(6, 8)) - 1;
+            base_date = base_date.substring(0, 6) + dd;
+        } else if (hour % 3 == 0)
             hour = hour - 1;
-        else if(hour%3 == 1)
+        else if (hour % 3 == 1)
             hour = hour - 2;
 
         base_time = hour + "00";
@@ -71,8 +72,8 @@ public class PredictionService {
         System.out.println(base_time);
 
 
-        String spaceUrl = this.baseUrl + "/ForecastSpaceData?ServiceKey=" +  this.ServiceKey + "&base_date=" + base_date + "&base_time=" +
-                base_time + "&nx=" + predictionRequestDto.getNx() + "&ny=" + predictionRequestDto.getNy() +  "&numOfRows=30&_type=json";
+        String spaceUrl = this.baseUrl + "/ForecastSpaceData?ServiceKey=" + this.ServiceKey + "&base_date=" + base_date + "&base_time=" +
+                base_time + "&nx=" + predictionRequestDto.getNx() + "&ny=" + predictionRequestDto.getNy() + "&numOfRows=30&_type=json";
 
 
         System.out.println(timeUrl);
@@ -81,7 +82,7 @@ public class PredictionService {
         URI spaceUri = new URI(spaceUrl);
 
         String timeResult = restTemplate.getForObject(timeUri, String.class);
-        String spaceResult= restTemplate.getForObject(spaceUri, String.class);
+        String spaceResult = restTemplate.getForObject(spaceUri, String.class);
 
         JSONParser parser = new JSONParser();
 
@@ -109,7 +110,6 @@ public class PredictionService {
             String bsDate = object.get("baseDate").toString();
             String pdDate = object.get("fcstDate").toString();
 
-            //파싱 왜 안되냐구...
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
             Date baseDate = format.parse(bsDate);
             Date predictionDate = format.parse(pdDate);
@@ -120,40 +120,39 @@ public class PredictionService {
             prediction.setNy(Integer.parseInt(object.get("ny").toString()));
 
 
-
-            for(int i = 1; i < timeJsonArray.size();i++){
+            for (int i = 1; i < timeJsonArray.size(); i++) {
                 JSONObject jsonObject = (JSONObject) parser.parse(timeJsonArray.get(i).toString());
                 String category = jsonObject.get("category").toString();
                 float value = Float.valueOf(jsonObject.get("fcstValue").toString());
 
-                if(map.containsKey(category)){
-                    if(map.get(category) < 2)
+                if (map.containsKey(category)) {
+                    if (map.get(category) < 2)
                         resultMap.put(category, value);
                     map.put(category, map.get(category) + 1);
-                }else{
+                } else {
                     map.put(category, 1);
                 }
             }
 
             float skyValue = resultMap.get("SKY");
 
-            if(skyValue == 1)
+            if (skyValue == 1)
                 prediction.setWeatherCode(WeatherCode.SUNNY);
-            else if(skyValue == 2 || skyValue == 3)
+            else if (skyValue == 2 || skyValue == 3)
                 prediction.setWeatherCode(WeatherCode.CLOUD);
-            else if(skyValue == 4)
+            else if (skyValue == 4)
                 prediction.setWeatherCode(WeatherCode.CLOUDY);
 
             float rainSnowValue = resultMap.get("PTY");
 
-            if(rainSnowValue == 1)
+            if (rainSnowValue == 1)
                 prediction.setWeatherCode(WeatherCode.RAIN);
-            else if(rainSnowValue == 2 || rainSnowValue == 3)
+            else if (rainSnowValue == 2 || rainSnowValue == 3)
                 prediction.setWeatherCode(WeatherCode.SNOW);
 
             float thunderValue = resultMap.get("LGT");
 
-            if(thunderValue == 2 || thunderValue == 3)
+            if (thunderValue == 2 || thunderValue == 3)
                 prediction.setWeatherCode(WeatherCode.THUNDER);
 
             prediction.setTemperature(resultMap.get("T1H").toString());
@@ -169,11 +168,6 @@ public class PredictionService {
 
 
         return prediction;
-    }
-
-
-    public void getPrediction(){
-
     }
 
 }

@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.net.URISyntaxException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by godong9 on 2017. 7. 29..
  */
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/prediction")
 public class PredictionController {
@@ -21,8 +23,8 @@ public class PredictionController {
     private PredictionService predictionService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public Prediction  readPrediction(@Valid @RequestBody PredictionRequestDto predictionRequestDto) throws URISyntaxException {
-        Prediction predictionResponseDto = this.predictionService.readPrediction(predictionRequestDto);
-        return predictionResponseDto;
+    public Prediction readPrediction(@Valid @RequestBody PredictionRequestDto predictionRequestDto) throws URISyntaxException {
+        Prediction prediction = this.predictionService.readPrediction(predictionRequestDto);
+        return prediction;
     }
 }
