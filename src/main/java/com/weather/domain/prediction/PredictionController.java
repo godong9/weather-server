@@ -27,20 +27,20 @@ public class PredictionController {
     }
 
     @GetMapping("/predictions/crawling")
-    public void predictionCrawling() throws URISyntaxException {
-        // TODO: nx, ny 전부 돌면서
-        // predictionService.readPrediction(predictionRequestDto);
+    public List<Prediction> predictionCrawling() throws URISyntaxException {
+        List<Prediction> predictionList = predictionService.predictionCrawling();
+        return predictionList;
     }
 
-    @PostMapping("/predictions")
-    public Prediction readPrediction(@Valid @RequestBody PredictionRequestDto predictionRequestDto) throws URISyntaxException {
-        Prediction prediction = predictionService.readPrediction(predictionRequestDto);
+    @GetMapping("/predictions")
+    public Prediction readPrediction(@RequestParam(name = "nx") int nx, @RequestParam(name = "ny") int ny) throws URISyntaxException {
+        Prediction prediction = predictionService.readPrediction(nx, ny);
         return prediction;
     }
 
-    @GetMapping("/predictions/list")
-    public List<Prediction> readPredictionList() throws URISyntaxException {
-        // TODO: startNx, startNy, endNx, endNy 받아서 범위 검색
-
-    }
+//    @GetMapping("/predictions/list")
+//    public List<Prediction> readPredictionList() throws URISyntaxException {
+//        // TODO: startNx, startNy, endNx, endNy 받아서 범위 검색
+//
+//    }
 }

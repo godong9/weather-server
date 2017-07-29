@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
@@ -31,8 +32,38 @@ public class PredictionService {
 
     private String ServiceKey = "%2BaK44ICKBp5y4KlIjv3tYRMb2QyCAtghncqxCvC4Q2kHIjJJ86oXXHijjCFJeAOUmwbe9cs1r1rQWyu5EZS6bQ%3D%3D";
 
+    @Transactional(readOnly = false)
+    public List<Prediction> predictionCrawling() throws URISyntaxException {
+        List<Integer> xList = new ArrayList<>();
+        List<Integer> yList = new ArrayList<>();
+        List<Prediction> predictionList = new ArrayList<>();
 
-    public Prediction readPrediction(PredictionRequestDto predictionRequestDto) throws URISyntaxException {
+        try {
+            File csv = new File("/Users/gain/weather-server/src/main/resources/nxny.csv");
+            BufferedReader br = new BufferedReader(new FileReader(csv));
+            String line = "";
+
+            while ((line = br.readLine()) != null){
+                String[] token = line.split(",", -1);
+                xList.add(Integer.parseInt(token[0]));
+                yList.add(Integer.parseInt(token[1]));
+            }
+            br.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for(int i = 0; i < xList.size(); i++){
+            predictionList.add(this.readPrediction(xList.get(i), yList.get(i)));
+        }
+        return predictionList;
+    }
+
+    @Transactional(readOnly = false)
+    public Prediction readPrediction(int nx,  int ny) throws URISyntaxException {
         Prediction prediction = new Prediction();
         Map<String, Integer> map = new HashMap<>();
         Map<String, Float> resultMap = new HashMap<>();
@@ -44,19 +75,27 @@ public class PredictionService {
         int hour = dt.getHourOfDay();
         int minute = dt.getMinuteOfHour();
 
+
         if (minute < 30) {
             hour = hour - 1;
+            System.out.println(hour);
             if (hour < 0) {
+                hour = 23;
+                System.out.println(hour);
                 int dd = Integer.parseInt(base_date.substring(6, 8)) - 1;
                 base_date = base_date.substring(0, 6) + dd;
             }
-
         }
 
-        String base_time = hour + "30";
+        String base_time = "";
+
+        if(hour < 10)
+            base_time = "0" + hour + "30";
+        else
+            base_time = hour + "30";
 
         String timeUrl = this.baseUrl + "/ForecastTimeData?ServiceKey=" + this.ServiceKey + "&base_date=" + base_date + "&base_time=" +
-                base_time + "&nx=" + predictionRequestDto.getNx() + "&ny=" + predictionRequestDto.getNy() + "&numOfRows=30&_type=json";
+                base_time + "&nx=" + nx + "&ny=" + ny + "&numOfRows=30&_type=json";
 
         if (hour == 2) {
             hour = 23;
@@ -69,14 +108,8 @@ public class PredictionService {
 
         base_time = hour + "00";
 
-        System.out.println(base_time);
-
-
         String spaceUrl = this.baseUrl + "/ForecastSpaceData?ServiceKey=" + this.ServiceKey + "&base_date=" + base_date + "&base_time=" +
-                base_time + "&nx=" + predictionRequestDto.getNx() + "&ny=" + predictionRequestDto.getNy() + "&numOfRows=30&_type=json";
-
-
-        System.out.println(timeUrl);
+                base_time + "&nx=" + nx + "&ny=" + ny + "&numOfRows=30&_type=json";
 
         URI timeUri = new URI(timeUrl);
         URI spaceUri = new URI(spaceUrl);
@@ -102,7 +135,6 @@ public class PredictionService {
             JSONObject rainProp = (JSONObject) spaceJsonArray.get(0);
             prediction.setRainProp(rainProp.get("fcstValue").toString());
             System.out.println(rainProp.get("fcstValue").toString());
-
 
             JSONObject object = (JSONObject) parser.parse(timeJsonArray.get(0).toString());
             map.put(object.get("category").toString(), 1);
