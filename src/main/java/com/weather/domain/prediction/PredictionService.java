@@ -32,7 +32,7 @@ public class PredictionService {
 
     private String baseUrl = "http://newsky2.kma.go.kr/service/SecndSrtpdFrcstInfoService2";
 
-    private String ServiceKey = "nKLi60PlKsKvxCjkrxepPposghEF1gzuDrq2Sa2HkWGgrw64Ryi%2FUV%2BlzJfPeZ6OYdq3v9Yqlf5l%2B7NcEaB9CA%3D%3D";
+    private String ServiceKey = "cXqTRI3qOGp4XFS9evMZ5MI%2BA0UE0b3%2FnKPpFZ2SsrzGnB5jaFVuxCfQZ97%2F6xiR%2Boat8hyjcdHzdNUDKZC8xw%3D%3D";
 
     public Prediction findOne(Long id) {
         return predictionRepository.findOne(id);
